@@ -1,0 +1,74 @@
+# Joohyung Oh
+# joohyuo@uci.edu
+# 70426210
+
+from pathlib import Path
+import shlex
+import sys
+
+def main():
+    
+    user_input = input()
+    user_input = shlex.split(user_input)
+
+    if len(user_input) == 1:
+        command = user_input[0]
+    elif len(user_input) == 2:
+        command, path = user_input[0], user_input[1]
+    elif len(user_input) == 4:
+        command, path, option, file_name = user_input[0], user_input[1], user_input[2], user_input[3]
+    
+    if command == "C":
+        file_path = Path(path)
+        file = file_path / file_name
+        if file.exists() or not file_path.is_dir():
+            print("ERROR".strip())
+        else:
+            print(create_file(path, option, file_name).strip())
+    elif command == "D":
+        file_path = Path(path)
+        if not file_path.exists() or file_path.suffix != '.dsu':
+            print("ERROR".strip())
+        else:
+            print(delete_file(path).strip())
+    elif command == "R":
+        file_path = Path(path)
+        if not file_path.exists() or file_path.suffix != '.dsu':
+            print("ERROR".strip())
+        else:
+            print(read_file(path).strip())
+    elif command == "Q":
+        sys.exit(0)
+
+def create_file(path, option, file_name): 
+
+    file_path = Path(path)
+    if option == '-n':
+        new_file = file_path / file_name
+        new_file = new_file.with_suffix('.dsu')
+        new_file.touch()
+        return(f"{new_file} CREATED")
+
+def delete_file(path):
+
+    file = Path(path)
+    file.unlink()
+    return(f"{file} DELETED")
+
+def read_file(path):
+    
+    file = Path(path)
+    content = file.read_text()
+    if not content:
+        return("EMPTY")
+    else:
+        return(content)
+
+if __name__ == "__main__":
+    while True:
+        try:
+            main()
+        except SystemExit:
+            raise
+        except:
+            print("ERROR".strip())
